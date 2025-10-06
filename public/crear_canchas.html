@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Cancha</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header>
+    <h2>Registrar nueva cancha</h2>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/canchas">Ver canchas</a>
+    </nav>
+  </header>
+
+  <section>
+    <form id="courtForm">
+      <label for="name">Nombre:</label>
+      <input type="text" id="name" required>
+
+      <label for="location">Ubicación:</label>
+      <input type="text" id="location" required>
+
+      <label for="type">Tipo:</label>
+      <select id="type" required>
+        <option value="Fútbol">Fútbol</option>
+        <option value="Tenis">Tenis</option>
+        <option value="Padel">Padel</option>
+        <option value="Otro">Otro</option>
+      </select>
+
+      <button type="submit">Crear cancha</button>
+    </form>
+
+    <div id="message"></div>
+  </section>
+
+  <script>
+    document.getElementById('courtForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Debes iniciar sesión como administrador');
+        return;
+      }
+
+      const data = {
+        name: document.getElementById('name').value,
+        location: document.getElementById('location').value,
+        type: document.getElementById('type').value
+      };
+
+      fetch('/api/courts', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(result => {
+        if (result.error) {
+          document.getElementById('message').innerText = '❌ ' + result.error;
+        } else {
+          document.getElementById('message').innerText = '✅ Cancha creada con éxito';
+          document.getElementById('courtForm').reset();
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../models/User.php';
 
+//require_once __DIR__ . '/../../middleware/AuthMiddleware.php';
+
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -72,14 +74,17 @@ class UserController {
             return $response->withHeader('Content-Type', 'application/json')
                             ->withStatus(401);
         }
-        // Si la contraseña es correcta, retorna el usuario
-        $response->getBody()->write(json_encode([
-            'message' => 'Login exitoso',
-            'user'    => $user
-        ]));
+        
         // Generar nuevo token y expiración
         $newToken = bin2hex(random_bytes(16));
         $newExpiry = date('Y-m-d H:i:s', strtotime('+5 minutes'));
+
+        // Si la contraseña es correcta, retorna el usuario
+        $response->getBody()->write(json_encode([
+            'message' => 'Login exitoso',
+            'user'    => $user,
+            'token'   => $newToken
+        ]));
 
         // Guardar token y expiración en la base de datos
         $pdo = new PDO("mysql:host=localhost;dbname=seminariophp;charset=utf8", "root", "");
@@ -90,9 +95,6 @@ class UserController {
             ':id'      => $user['id']
         ]);
 
-        $response->getBody()->write(json_encode([
-            'token' => $newToken
-        ]));
         return $response->withHeader('Content-Type', 'application/json')
                         ->withStatus(200);
     }

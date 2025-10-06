@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>DVD Sports</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header>
+    <div><strong>DVD Sports</strong></div>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/reservas">Reservas</a>
+      <a href="/public/crear_canchas.html">Canchas</a>
+      <a href="/usuarios" id="adminLink" style="display:none;">Usuarios</a>
+      <button class="btn" id="loginBtn" onclick="window.location.href='/login'"> Iniciar sesión </button>
+      <button class="btn" id="logoutBtn" style="display:none;" onclick="logout()">Cerrar sesión</button>
+
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Bienvenido a DVD Sports</h1>
+    <p>Gestioná tus reservas y encontrá compañeros para jugar</p>
+  </section>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const isLoggedIn = !!token;
+    const isAdmin = localStorage.getItem('is_admin') === '1';
+
+    document.getElementById('loginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+    document.getElementById('logoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+    document.getElementById('adminLink').style.display = isAdmin ? 'inline-block' : 'none';
+
+  </script>
+
+<script>
+  function logout() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    fetch('/logout', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
+    }).then(res => {
+      if (res.ok) {
+        localStorage.removeItem('token');
+        window.location.href = '/';
+      }
+    });
+  }
+</script>
+
+
+</body>
+</html>

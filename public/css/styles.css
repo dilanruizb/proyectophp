@@ -1,101 +1,50 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Fondo */
 body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #4f46e5, #3b82f6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-/* Contenedor principal */
-.container {
-  width: 100%;
-  max-width: 400px;
-}
-
-/* Caja del formulario */
-.form-box {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  text-align: center;
-  animation: fadeIn 0.6s ease-in-out;
-}
-
-.form-box h2 {
-  margin-bottom: 1.5rem;
-  color: #333;
-}
-
-/* Inputs */
-.input-group {
-  margin-bottom: 1rem;
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 0.3rem;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 0.7rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-}
-
-.input-group input:focus {
-  border-color: #3b82f6;
-}
-
-/* Botón */
-.btn {
-  width: 100%;
-  padding: 0.8rem;
-  background: #3b82f6;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: url('cancha.jpg') no-repeat center center fixed;
+  background-size: cover;
   color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s;
 }
 
-.btn:hover {
-  background: #2563eb;
+header {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Texto alternativo */
-.toggle {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-}
-
-.toggle a {
-  color: #3b82f6;
+nav a {
+  color: white;
+  margin: 0 1rem;
   text-decoration: none;
   font-weight: bold;
 }
 
-.toggle a:hover {
-  text-decoration: underline;
+.hero {
+  text-align: center;
+  margin-top: 20vh;
 }
 
-/* Animación */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+}
+
+.btn {
+  background-color: #ffffff22;
+  border: 1px solid white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+.btn:hover {
+  background-color: white;
+  color: black;
 }

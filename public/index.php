@@ -10,6 +10,15 @@ require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../src/controllers/UserController.php';
 require __DIR__ . '/../src/models/DB.php';
 
+require_once __DIR__ . '/../src/controllers/CourtController.php';
+$courtController = new \CourtController();
+
+$app->get('/api/courts', fn($req, $res) => $courtController::getAll($req, $res));
+$app->post('/api/courts', fn($req, $res) => $courtController::create($req, $res));
+$app->put('/api/courts/{id}', fn($req, $res, $args) => $courtController::update($req, $res, $args));
+$app->delete('/api/courts/{id}', fn($req, $res, $args) => $courtController::delete($req, $res, $args));
+
+
 $userController = new \UserController();
 
 $app = AppFactory::create();
@@ -41,9 +50,18 @@ $app->add(function (Request $request, $handler) {
 
 // Página principal
 $app->get('/', function (Request $request, Response $response) {
-    $response->getBody()->write("<h1>Bienvenido a Slim App</h1><p><a href='/login'>Iniciar Sesión</a> | <a href='/register'>Registrarse</a></p>");
-    return $response;
+    $path = __DIR__ . '/index.html';
+
+    if (!file_exists($path)) {
+        $response->getBody()->write("Archivo no encontrado en: $path");
+        return $response->withStatus(500);
+    }
+
+    $html = file_get_contents($path);
+    $response->getBody()->write($html);
+    return $response->withHeader('Content-Type', 'text/html');
 });
+
 
 // Formulario login
 $app->get('/login', function (Request $request, Response $response) {
@@ -51,6 +69,7 @@ $app->get('/login', function (Request $request, Response $response) {
     $response->getBody()->write($html);
     return $response->withHeader('Content-Type', 'text/html');
 });
+
 
 // Formulario registro
 $app->get('/register', function (Request $request, Response $response) {
@@ -69,9 +88,45 @@ $app->post('/login', function (Request $request, Response $response) use ($userC
     return $userController->login($request, $response);
 });
 
+
+//proteyer rutas
+
+// Crear cancha (solo admin)
+$app->post('/api/courts', function (Request $request, Response $response) use ($courtController) {
+    $authHeader = $request->getHeaderLine('Authorization');
+    $token = str_replace('Bearer ', '', $authHeader);
+
+    $user = \UserController::validateToken($token, true);
+    if (!$user) {
+        $response->getBody()->write(json_encode(['error' => 'Acceso denegado']));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+    }
+
+    return $courtController::create($request, $response);
+});
+
+$app->get('/crear_canchas', function (Request $request, Response $response) {
+    $html = file_get_contents(__DIR__ . '/crear_canchas.html');
+    $response->getBody()->write($html);
+    return $response->withHeader('Content-Type', 'text/html');
+});
+
+
 /* ===========================
    RUTAS API
    =========================== */
+
+$app->post('/logout', function (Request $request, Response $response) {
+    $authHeader = $request->getHeaderLine('Authorization');
+    $token = str_replace('Bearer ', '', $authHeader);
+
+    $pdo = new PDO("mysql:host=localhost;dbname=seminariophp;charset=utf8", "root", "");
+    $stmt = $pdo->prepare("UPDATE users SET token = NULL, expired = NULL WHERE token = :token");
+    $stmt->execute([':token' => $token]);
+
+    $response->getBody()->write(json_encode(['message' => 'Sesión cerrada']));
+    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+});
 
 // GET todos los usuarios
 $app->get('/api/users', function (Request $request, Response $response) {

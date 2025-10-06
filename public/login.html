@@ -10,7 +10,7 @@
   <div class="container">
     <div class="form-box">
       <h2>Iniciar Sesión</h2>
-      <form action="/login" method="POST">
+      <form action="/login" method="POST" id="loginForm">
         <div class="input-group">
           <label for="email">Usuario</label>
           <input type="text" name="email" id="email" required>
@@ -24,5 +24,29 @@
       </form>
     </div>
   </div>
+
+  <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.token) {
+              localStorage.setItem('token', data.token);
+              window.location.href = '/'; // 🔁 Redirige al inicio
+            } else {
+              alert(data.error || 'Error al iniciar sesión');
+            }
+          });
+        });
+</script>
 </body>
 </html>

@@ -38,6 +38,15 @@ class User {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function findByEmail($email) {
+        $pdo = new PDO("mysql:host=localhost;dbname=seminariophp;charset=utf8", "root", "");
+        $db = $pdo;
+        $stmt = $db->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->execute([':email' => $email]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
       public static function findById($id) {
         $pdo = new PDO("mysql:host=localhost;dbname=seminariophp;charset=utf8", "root", "");
         $db = $pdo;
